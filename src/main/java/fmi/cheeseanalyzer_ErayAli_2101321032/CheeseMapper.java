@@ -29,7 +29,7 @@ public class CheeseMapper extends MapReduceBase implements Mapper<LongWritable, 
 	    @Override
 	    public void map(LongWritable key, Text value, OutputCollector<Text, DoubleWritable> output, Reporter reporter)
 	            throws IOException {
-	        if (key.get() == 0) return; // Skip header row
+	        if (key.get() == 0) return;
 	        
 	        String[] columns = value.toString().split("\",\"");
 	        // Check if columns match our filters
