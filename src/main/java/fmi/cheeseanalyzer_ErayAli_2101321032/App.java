@@ -134,6 +134,7 @@ public class App extends JFrame {
 		job.set("provCode", provCodeCombo.getSelectedItem().toString());
 		job.set("category", categoryCombo.getSelectedItem().toString());
 		job.set("milkType", milkTypeCombo.getSelectedItem().toString());
+        job.set("calcType", calculationType.getSelectedItem().toString());
 
 		setMapperAndReducer(job);
 		job.setOutputKeyClass(Text.class);

@@ -12,7 +12,13 @@ public class AverageMoistureMapper extends CheeseMapper {
 			throws IOException {
 		try {
 			double moisture = Double.parseDouble(columns[3]);
-			output.collect(new Text(outputKey), new DoubleWritable(moisture));
+
+			if (provCode.equals("All")) {
+				String aggregatedKey = "AllProvinces-" + category + "-" + milkType;
+				output.collect(new Text(aggregatedKey), new DoubleWritable(moisture));
+			} else {
+				output.collect(new Text(outputKey), new DoubleWritable(moisture));
+			}
 		} catch (NumberFormatException e) {
 			// Skip invalid numbers
 		}

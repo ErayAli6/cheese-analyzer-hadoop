@@ -12,6 +12,6 @@ public class AverageMoistureReducer extends CheeseReducer {
 			throws IOException {
 		double average = sum / count;
 		average = Math.round(average * 100.0) / 100.0;
-		output.collect(new Text(key + " Average Moisture:"), new DoubleWritable(average));
+		output.collect(new Text(key + " " + calcType + ":"), new DoubleWritable(average));
 	}
 }
