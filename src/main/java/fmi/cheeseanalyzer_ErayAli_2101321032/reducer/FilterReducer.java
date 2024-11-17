@@ -10,7 +10,6 @@ public class FilterReducer extends CheeseReducer {
     @Override
     protected void processOutput(Text key, double sum, int count, OutputCollector<Text, DoubleWritable> output)
             throws IOException {
-        // Output the filtered record without CheeseId
         output.collect(key, new DoubleWritable(0.0));
     }
 }
