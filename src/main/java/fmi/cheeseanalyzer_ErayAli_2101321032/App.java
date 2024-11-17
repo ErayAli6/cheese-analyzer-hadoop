@@ -1,5 +1,7 @@
 package fmi.cheeseanalyzer_ErayAli_2101321032;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -26,27 +28,16 @@ public class App extends JFrame {
 	}
 
 	public App() {
-		initializeFrame();
+		init();
 	}
 
-	private void initializeFrame() {
-		JPanel panel = createPanel();
-		add(panel);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(800, 900);
-		setVisible(true);
-	}
-
-	private JPanel createPanel() {
+	private void init() {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
+		setSize(800, 900);
+		setTitle("Cheese Analyzer");
+		getContentPane().setBackground(Color.WHITE);
 
-		initializeComponents(panel);
-
-		return panel;
-	}
-
-	private void initializeComponents(JPanel panel) {
 		String[] manufacturerProvCodeOptions = { "All", "AB", "BC", "MB", "NB", "NL", "NS", "ON", "PE", "QC", "SK" };
 		String[] categoryTypeOptions = { "All", "Firm Cheese", "Fresh Cheese", "Hard Cheese", "Semi-soft Cheese",
 				"Soft Cheese", "Veined Cheese" };
@@ -60,30 +51,50 @@ public class App extends JFrame {
 		calculationType = new JComboBox<>(calcTypes);
 
 		JButton analyzeButton = new JButton("Analyze");
+		analyzeButton.setFont(new Font("Arial", Font.BOLD, 14));
+		analyzeButton.setBackground(new Color(59, 89, 182));
+		analyzeButton.setForeground(Color.WHITE);
+		analyzeButton.setFocusPainted(false);
+
 		resultOutput = new JTextArea();
 		resultOutput.setEditable(false);
+		resultOutput.setFont(new Font("Monospaced", Font.PLAIN, 14));
 		JScrollPane scrollPane = new JScrollPane(resultOutput);
 
+		JLabel parametersLabel = new JLabel("Analysis Parameters:");
 		JLabel provLabel = new JLabel("Province:");
 		JLabel catLabel = new JLabel("Category:");
 		JLabel milkLabel = new JLabel("Milk Type:");
 		JLabel calcLabel = new JLabel("Calculation:");
+		JLabel resultsLabel = new JLabel("Analysis Results:");
 
-		provLabel.setBounds(50, 50, 100, 25);
-		provCodeCombo.setBounds(150, 50, 200, 25);
+		int labelWidth = 100;
+		int comboWidth = 200;
+		int height = 25;
+		int startX = 50;
+		int gapY = 40;
 
-		catLabel.setBounds(50, 90, 100, 25);
-		categoryCombo.setBounds(150, 90, 200, 25);
+		parametersLabel.setBounds(startX, 20, 200, height);
 
-		milkLabel.setBounds(50, 130, 100, 25);
-		milkTypeCombo.setBounds(150, 130, 200, 25);
+		provLabel.setBounds(startX, 60, labelWidth, height);
+		provCodeCombo.setBounds(startX + labelWidth + 10, 60, comboWidth, height);
 
-		calcLabel.setBounds(50, 170, 100, 25);
-		calculationType.setBounds(150, 170, 200, 25);
+		catLabel.setBounds(startX, 60 + gapY, labelWidth, height);
+		categoryCombo.setBounds(startX + labelWidth + 10, 60 + gapY, comboWidth, height);
 
-		analyzeButton.setBounds(150, 220, 200, 30);
-		scrollPane.setBounds(50, 270, 700, 550);
+		milkLabel.setBounds(startX, 60 + 2 * gapY, labelWidth, height);
+		milkTypeCombo.setBounds(startX + labelWidth + 10, 60 + 2 * gapY, comboWidth, height);
 
+		calcLabel.setBounds(startX, 60 + 3 * gapY, labelWidth, height);
+		calculationType.setBounds(startX + labelWidth + 10, 60 + 3 * gapY, comboWidth, height);
+
+		analyzeButton.setBounds(startX + labelWidth + 10, 60 + 4 * gapY + 10, comboWidth, height + 10);
+
+		resultsLabel.setBounds(startX, 60 + 5 * gapY + 40, 200, height);
+		
+		scrollPane.setBounds(startX, 60 + 5 * gapY + 70, 700, 550);
+
+		panel.add(parametersLabel);
 		panel.add(provLabel);
 		panel.add(provCodeCombo);
 		panel.add(catLabel);
@@ -93,7 +104,13 @@ public class App extends JFrame {
 		panel.add(calcLabel);
 		panel.add(calculationType);
 		panel.add(analyzeButton);
+		panel.add(resultsLabel);
 		panel.add(scrollPane);
+
+		add(panel);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
+		setVisible(true);
 
 		analyzeButton.addActionListener(new ActionListener() {
 			@Override
@@ -127,6 +144,7 @@ public class App extends JFrame {
 			if (fs.exists(outputPath)) {
 				fs.delete(outputPath, true);
 			}
+
 			RunningJob task = JobClient.runJob(job);
 			if (task.isSuccessful()) {
 				readResultFile(fs);
