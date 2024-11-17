@@ -17,8 +17,10 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.*;
 
 import fmi.cheeseanalyzer_ErayAli_2101321032.mapper.AverageMoistureMapper;
+import fmi.cheeseanalyzer_ErayAli_2101321032.mapper.FilterMapper;
 import fmi.cheeseanalyzer_ErayAli_2101321032.mapper.OrganicPercentageMapper;
 import fmi.cheeseanalyzer_ErayAli_2101321032.reducer.AverageMoistureReducer;
+import fmi.cheeseanalyzer_ErayAli_2101321032.reducer.FilterReducer;
 import fmi.cheeseanalyzer_ErayAli_2101321032.reducer.OrganicPercentageReducer;
 
 public class App extends JFrame {
@@ -48,7 +50,7 @@ public class App extends JFrame {
 				"Soft Cheese", "Veined Cheese" };
 		String[] milkTypeOptions = { "All", "Cow", "Goat", "Ewe", "Cow and Goat", "Cow and Ewe", "Goat and Ewe",
 				"Cow, Goat and Ewe", "Buffalo Cow" };
-		String[] calcTypes = { "Average Moisture", "Organic Percentage" };
+		String[] calcTypes = { "None", "Average Moisture", "Organic Percentage" };
 
 		provCodeCombo = new JComboBox<>(manufacturerProvCodeOptions);
 		categoryCombo = new JComboBox<>(categoryTypeOptions);
@@ -134,7 +136,7 @@ public class App extends JFrame {
 		job.set("provCode", provCodeCombo.getSelectedItem().toString());
 		job.set("category", categoryCombo.getSelectedItem().toString());
 		job.set("milkType", milkTypeCombo.getSelectedItem().toString());
-        job.set("calcType", calculationType.getSelectedItem().toString());
+		job.set("calcType", calculationType.getSelectedItem().toString());
 
 		setMapperAndReducer(job);
 		job.setOutputKeyClass(Text.class);
@@ -172,13 +174,20 @@ public class App extends JFrame {
 
 	private void setMapperAndReducer(JobConf job) {
 		String calcTypeSelected = calculationType.getSelectedItem().toString();
-		if (calcTypeSelected.equalsIgnoreCase("Average Moisture")) {
+		switch (calcTypeSelected) {
+		case "Average Moisture":
 			job.setMapperClass(AverageMoistureMapper.class);
 			job.setReducerClass(AverageMoistureReducer.class);
-		} else if (calcTypeSelected.equalsIgnoreCase("Organic Percentage")) {
+			break;
+		case "Organic Percentage":
 			job.setMapperClass(OrganicPercentageMapper.class);
 			job.setReducerClass(OrganicPercentageReducer.class);
-		} else {
+			break;
+		case "None":
+			job.setMapperClass(FilterMapper.class);
+			job.setReducerClass(FilterReducer.class);
+			break;
+		default:
 			throw new IllegalArgumentException("Unsupported calculation type: " + calcTypeSelected);
 		}
 	}

@@ -24,7 +24,6 @@ public abstract class CheeseMapper extends MapReduceBase implements Mapper<LongW
 		if (key.get() == 0) {
 			return;
 		}
-
 		String[] columns = value.toString().split("\",\"");
 		boolean matchesFilters = (provCode.equals("All") || columns[1].equals(provCode))
 				&& (category.equals("All") || columns[7].equals(category))
