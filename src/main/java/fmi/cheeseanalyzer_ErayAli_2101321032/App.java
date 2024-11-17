@@ -26,14 +26,27 @@ public class App extends JFrame {
 	}
 
 	public App() {
-		init();
+		initializeFrame();
 	}
 
-	private void init() {
+	private void initializeFrame() {
+		JPanel panel = createPanel();
+		add(panel);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(800, 900);
+		setVisible(true);
+	}
+
+	private JPanel createPanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
-		setSize(800, 900);
 
+		initializeComponents(panel);
+
+		return panel;
+	}
+
+	private void initializeComponents(JPanel panel) {
 		String[] manufacturerProvCodeOptions = { "All", "AB", "BC", "MB", "NB", "NL", "NS", "ON", "PE", "QC", "SK" };
 		String[] categoryTypeOptions = { "All", "Firm Cheese", "Fresh Cheese", "Hard Cheese", "Semi-soft Cheese",
 				"Soft Cheese", "Veined Cheese" };
@@ -82,10 +95,6 @@ public class App extends JFrame {
 		panel.add(analyzeButton);
 		panel.add(scrollPane);
 
-		add(panel);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setVisible(true);
-
 		analyzeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -100,13 +109,11 @@ public class App extends JFrame {
 		Path outputPath = new Path("hdfs://127.0.0.1:9000/result");
 		JobConf job = new JobConf(conf, App.class);
 
-		// Set job configuration parameters
 		job.set("provCode", provCodeCombo.getSelectedItem().toString());
 		job.set("category", categoryCombo.getSelectedItem().toString());
 		job.set("milkType", milkTypeCombo.getSelectedItem().toString());
 		job.set("calcType", calculationType.getSelectedItem().toString());
 
-		// Set job classes
 		job.setMapperClass(CheeseMapper.class);
 		job.setReducerClass(CheeseReducer.class);
 		job.setOutputKeyClass(Text.class);
@@ -120,22 +127,25 @@ public class App extends JFrame {
 			if (fs.exists(outputPath)) {
 				fs.delete(outputPath, true);
 			}
-
 			RunningJob task = JobClient.runJob(job);
 			if (task.isSuccessful()) {
-				Path resultFile = new Path("hdfs://127.0.0.1:9000/result/part-00000");
-				BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(resultFile)));
-				resultOutput.setText("");
-				String line;
-				while ((line = br.readLine()) != null) {
-					resultOutput.append(line + "\n");
-				}
-				br.close();
+				readResultFile(fs);
 			} else {
 				resultOutput.setText("Error processing data");
 			}
 		} catch (IOException e) {
 			resultOutput.setText("Error: " + e.getMessage());
 		}
+	}
+
+	private void readResultFile(FileSystem fs) throws IOException {
+		Path resultFile = new Path("hdfs://127.0.0.1:9000/result/part-00000");
+		BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(resultFile)));
+		resultOutput.setText("");
+		String line;
+		while ((line = br.readLine()) != null) {
+			resultOutput.append(line + "\n");
+		}
+		br.close();
 	}
 }
