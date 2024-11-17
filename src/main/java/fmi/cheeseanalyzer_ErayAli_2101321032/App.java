@@ -17,13 +17,13 @@ import fmi.cheeseanalyzer_ErayAli_2101321032.mapper.*;
 import fmi.cheeseanalyzer_ErayAli_2101321032.reducer.*;
 
 public class App extends JFrame {
-	private JTable resultTable;
-	private DefaultTableModel tableModel;
 	private JComboBox<String> provCodeCombo;
 	private JComboBox<String> categoryCombo;
 	private JComboBox<String> milkTypeCombo;
 	private JComboBox<String> calculationType;
-
+	private JTable resultTable;
+	private DefaultTableModel tableModel;
+	
 	public static void main(String[] args) {
 		new App();
 	}
@@ -55,7 +55,6 @@ public class App extends JFrame {
 		analyzeButton.setFont(new Font("Arial", Font.BOLD, 14));
 		analyzeButton.setBackground(new Color(59, 89, 182));
 		analyzeButton.setForeground(Color.WHITE);
-		analyzeButton.setFocusPainted(false);
 
 		tableModel = new DefaultTableModel();
 		resultTable = new JTable(tableModel);
