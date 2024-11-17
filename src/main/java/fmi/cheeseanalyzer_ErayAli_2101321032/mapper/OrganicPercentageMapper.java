@@ -11,7 +11,6 @@ public class OrganicPercentageMapper extends CheeseMapper {
 	protected void processRecord(String[] columns, String outputKey, OutputCollector<Text, DoubleWritable> output)
 			throws IOException {
 		double isOrganic = columns[6].equals("1") ? 1.0 : 0.0;
-
 		if (milkType.equals("All")) {
 			output.collect(new Text(provCode + "-" + category + "-AllMilkTypes"), new DoubleWritable(isOrganic));
 		} else {

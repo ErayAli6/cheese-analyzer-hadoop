@@ -21,20 +21,45 @@ public abstract class CheeseMapper extends MapReduceBase implements Mapper<LongW
 	@Override
 	public void map(LongWritable key, Text value, OutputCollector<Text, DoubleWritable> output, Reporter reporter)
 			throws IOException {
-		if (key.get() == 0) {
+		if (isHeader(key)) {
 			return;
 		}
-		String[] columns = value.toString().split("\",\"");
-		boolean matchesFilters = (provCode.equals("All") || columns[1].equals(provCode))
-				&& (category.equals("All") || columns[7].equals(category))
-				&& (milkType.equals("All") || columns[8].equals(milkType));
 
-		if (matchesFilters) {
-			String outputKey = String.format("%s-%s-%s", columns[1], columns[7], columns[8]);
+		String[] columns = parseColumns(value.toString());
+		replaceEmptyFields(columns);
+
+		if (matchesFilters(columns)) {
+			String outputKey = generateOutputKey(columns);
 			processRecord(columns, outputKey, output);
 		}
 	}
 
 	protected abstract void processRecord(String[] columns, String outputKey,
 			OutputCollector<Text, DoubleWritable> output) throws IOException;
+
+	private boolean isHeader(LongWritable key) {
+		return key.get() == 0;
+	}
+
+	private String[] parseColumns(String value) {
+		return value.split("\",\"");
+	}
+
+	private void replaceEmptyFields(String[] columns) {
+		for (int i = 0; i < columns.length; i++) {
+			if (columns[i].trim().isEmpty()) {
+				columns[i] = "Unknown";
+			}
+		}
+	}
+
+	private boolean matchesFilters(String[] columns) {
+		return (provCode.equals("All") || columns[1].equals(provCode))
+				&& (category.equals("All") || columns[7].equals(category))
+				&& (milkType.equals("All") || columns[8].equals(milkType));
+	}
+
+	private String generateOutputKey(String[] columns) {
+		return String.format("%s-%s-%s", columns[1], columns[7], columns[8]);
+	}
 }

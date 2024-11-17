@@ -182,8 +182,7 @@ public class App extends JFrame {
             String[] parts = line.split("\t");
             if (calcType.equals("None")) {
                 String keyPart = parts[0];
-                // Ignore the placeholder DoubleWritable value in parts[1]
-                String[] dataColumns = keyPart.split("-", -1); // Split using '-' delimiter
+                String[] dataColumns = keyPart.split("-", -1);
                 tableModel.addRow(dataColumns);
             } else {
                 String[] filters = parts[0].split("-");
@@ -194,7 +193,7 @@ public class App extends JFrame {
         }
         br.close();
     }
-    
+
     private void setMapperAndReducer(JobConf job) {
         String calcTypeSelected = calculationType.getSelectedItem().toString();
         if (calcTypeSelected.equals("Average Moisture")) {

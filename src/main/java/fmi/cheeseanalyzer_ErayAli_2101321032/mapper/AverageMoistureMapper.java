@@ -12,7 +12,6 @@ public class AverageMoistureMapper extends CheeseMapper {
 			throws IOException {
 		try {
 			double moisture = Double.parseDouble(columns[3]);
-
 			if (provCode.equals("All")) {
 				String aggregatedKey = "AllProvinces-" + category + "-" + milkType;
 				output.collect(new Text(aggregatedKey), new DoubleWritable(moisture));
